@@ -1,14 +1,20 @@
-import asyncio
-from playwright.async_api import async_playwright
+import unittest
+
+import pytest
+from playwright.sync_api import Page
 
 
-async def test():
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
-        page = await browser.new_page()
-        await page.goto("http://localhost:8000")
+class NewVisitorTest(unittest.TestCase):
 
-        assert 'Congratulations!' in await page.title(), await page.title()
+    @pytest.fixture(autouse=True)
+    def setup(self, page: Page) -> None:
+        self.page = page
+
+    def test_can_start_a_list_and_retrieve_it_late(self):
+        self.page.goto('http://localhost:8000')
+        self.assertIn('To-Do', self.page.title())
+        self.fail('Finish the test')
 
 
-asyncio.run(test())
+if __name__ == '__main__':
+    unittest.main(warnings='ignore')
